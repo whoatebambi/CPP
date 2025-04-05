@@ -1,0 +1,33 @@
+---
+BasedOnStyle: LLVM
+
+# Indentation
+IndentWidth: 4
+TabWidth: 4
+UseTab: Always                  # But spaces are more consistent across editors and environments
+
+# Braces and layout
+BreakBeforeBraces: Attach      # Most commonly used in modern C++ projects
+AllowShortFunctionsOnASingleLine: Inline
+AllowShortIfStatementsOnASingleLine: false
+
+# Line length and alignment
+ColumnLimit: 100               # Allows room without being too wide
+AlignAfterOpenBracket: Align
+AlignOperands: true
+AlignConsecutiveAssignments: false
+AlignConsecutiveDeclarations: false
+
+# Includes
+SortIncludes: true
+IncludeBlocks: Preserve       # Keeps include blocks (like system vs project headers)
+
+# Pointers & References
+PointerAlignment: Left        # e.g., `int* ptr` — industry-preferred
+SpaceBeforeParens: ControlStatements
+SpaceAfterCStyleCast: true
+
+# C++ specifics
+DerivePointerAlignment: false
+Cpp11BracedListStyle: true
+AlwaysBreakTemplateDeclarations: MultiLine
