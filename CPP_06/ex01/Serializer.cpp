@@ -10,7 +10,7 @@ Serializer::~Serializer() {
 
 Serializer::Serializer(const Serializer& other) {
 	std::cout << "Serializer copy constructor called" << std::endl;
-	*this = other; // Will use operator=
+	*this = other;
 }
 
 Serializer& Serializer::operator=(const Serializer& rhs) {

@@ -4,7 +4,7 @@ int main(void) {
 	Data data;
 	data.number = 42;
 	data.text = "Hello, World!";
-	std::cout << "data.adress = " << &data << "\n";
+	std::cout << "data.address = " << &data << "\n";
 	std::cout << "data.number = " << data.number << "\n";
 	std::cout << "data.text   = " << data.text << "\n\n";
 
@@ -17,12 +17,12 @@ int main(void) {
 	std::cout << "raw->number = " << raw->number << "\n";
 	std::cout << "raw->text   = " << raw->text << "\n\n";
 
-	// Data* nullData = nullptr;
-	// uintptr_t nullPtr = Serializer::serialize(nullData);
-	// Data* back = Serializer::deserialize(nullPtr);
-	// std::cout << "\nNull pointer test:\n";
-	// std::cout << "nullPtr = " << nullPtr << "\n";
-	// std::cout << "back    = " << back << "\n";
+	Data* nullData = nullptr;
+	uintptr_t nullPtr = Serializer::serialize(nullData);
+	Data* back = Serializer::deserialize(nullPtr);
+	std::cout << "\nNull pointer test:\n";
+	std::cout << "nullPtr = " << nullPtr << "\n";
+	std::cout << "back    = " << back << "\n";
 
 	return (0);
 }

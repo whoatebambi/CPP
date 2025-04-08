@@ -12,7 +12,7 @@ CC			=	c++
 FLAG		=	-Wall -Wextra -Werror -std=c++98
 endif
 
-C_FILES		=	main.cpp Base.cpp A.cpp B.cpp C.cpp
+C_FILES		=	main.cpp Base.cpp
 
 OBJ_DIR		=	builds
 

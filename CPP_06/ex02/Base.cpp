@@ -1,10 +1,7 @@
 #include "Base.hpp"
-#include "A.hpp"
-#include "B.hpp"
-#include "C.hpp"
 
 Base::~Base() {
-	std::cout << "Base destructor called" << std::endl;
+	// std::cout << "Base destructor called" << std::endl;
 }
 
 // Randomly instantiates A, B, or C and returns the instance as a Base pointer.
@@ -23,38 +20,44 @@ Base* generate(void) {
 
 // Prints the actual type of the object pointed to by p: "A", "B", or "C".
 void identify(Base* p) {
+	// returns nullptr if cast fails
 	if (dynamic_cast<A*>(p))
-		std::cout << "Object is of type A" << std::endl;
+		std::cout << "Pointer object is of type A" << std::endl;
 	else if (dynamic_cast<B*>(p))
-		std::cout << "Object is of type B" << std::endl;
+		std::cout << "Pointer object is of type B" << std::endl;
 	else if (dynamic_cast<C*>(p))
-		std::cout << "Object is of type C" << std::endl;
+		std::cout << "Pointer object is of type C" << std::endl;
 	else
-		std::cout << "Type Unknown" << std::endl;
+		std::cout << "Pointer object: Type Unknown" << std::endl;
 }
 
 // Prints the actual type of the object referenced by p: "A", "B", or "C".
 // Using a pointer inside this function is forbidden.
 void identify(Base& p) {
+	// throws std::bad_cast if cast fails
 	try {
 		(void) dynamic_cast<A&>(p);
-		std::cout << "Object if of type A" << std::endl;
+		std::cout << "Reference object is of type A" << std::endl;
 		return;
-	} catch (const std::exception& e) {
+	} catch (const std::bad_cast& e) {
+		// std::cout << "Bad cast: " << e.what() << std::endl;
 	}
 
 	try {
 		(void) dynamic_cast<B&>(p);
-		std::cout << "Object if of type B" << std::endl;
+		std::cout << "Reference object is of type B" << std::endl;
 		return;
-	} catch (const std::exception& e) {
+	} catch (const std::bad_cast& e) {
+		// std::cout << "Bad cast: " << e.what() << std::endl;
 	}
 
 	try {
 		(void) dynamic_cast<C&>(p);
-		std::cout << "Object if of type C" << std::endl;
+		std::cout << "Reference object is of type C" << std::endl;
 		return;
-	} catch (const std::exception& e) {
+	} catch (const std::bad_cast& e) {
+		// std::cout << "Bad cast: " << e.what() << std::endl;
 	}
-	std::cout << "Unknown type" << std::endl;
+
+	std::cout << "Reference object: Type unknown" << std::endl;
 }
