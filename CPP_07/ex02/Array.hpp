@@ -2,6 +2,8 @@
 
 #include <cstddef>	 // For size_t
 #include <stdexcept> // for std::exception
+#include <iostream>
+#include <string>
 
 template <typename T> class Array {
   private:
@@ -9,16 +11,18 @@ template <typename T> class Array {
 	unsigned int _size;
 
   public:
-	// Default constructor
 	Array() : _data(NULL), _size(0) {}
 
-	// Constructor with size
+	~Array() { delete[] _data; }
+
 	Array(unsigned int n) : _data(new T[n]), _size(n) {}
 
-	// Copy constructor
-	Array(const Array& other) : _data(NULL), _size(0) { *this = other; }
+	Array(const Array& other) : _size(other._size) {
+		_data = new T[_size];
+		for (unsigned int i = 0; i < _size; ++i)
+			_data[i] = other._data[i];
+	}
 
-	// Copy assignment
 	Array& operator=(const Array& other) {
 		if (this != &other) {
 			delete[] _data;
@@ -29,9 +33,6 @@ template <typename T> class Array {
 		}
 		return *this;
 	}
-
-	// Destructor
-	~Array() { delete[] _data; }
 
 	// Element access
 	T& operator[](unsigned int index) {
@@ -47,6 +48,5 @@ template <typename T> class Array {
 		return _data[index];
 	}
 
-	// Size getter
 	unsigned int size() const { return _size; }
 };

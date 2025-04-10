@@ -1,9 +1,16 @@
-NAME		=	ex02
+NAME		=	ex00
 
 UNAME_S		:=	$(shell uname -s)
 
+# Default settings
 CC			=	c++
 FLAG		=	-Wall -Wextra -Werror -std=c++98
+
+# Settings for florencecousergue macOS
+ifeq ($(UNAME_S), Darwin)
+CC			=	c++
+FLAG		=	-Wall -Wextra -Werror -std=c++98
+endif
 
 C_FILES		=	main.cpp
 
@@ -36,6 +43,3 @@ re:	fclean all
 -include $(DEPS)
 
 .PHONY:	all clean fclean re
-
-asan:
-	clang++ -fsanitize=address -std=c++98 -g $(C_FILES) -o $(NAME)
