@@ -1,4 +1,8 @@
 #pragma once
 
-template <typename T>
-void	easyfind(T const& type, unsigned int nb);
+#include <iostream>
+#include <exception>
+
+#include "easyfind.tpp"
+
+template <typename T> typename T::iterator easyfind(T& container, int value);
