@@ -4,7 +4,7 @@ CC			=	c++
 
 FLAG		=	-Wall -Wextra -Werror -std=c++98
 
-C_FILES		=	main.cpp
+C_FILES		=	main.cpp BitcoinExchange.cpp
 
 OBJ_DIR		=	builds
 
