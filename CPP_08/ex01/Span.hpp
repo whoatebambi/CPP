@@ -1,25 +1,32 @@
-#pragma once
+#ifndef SPAN_HPP
+#define SPAN_HPP
 
 #include <exception>
 #include <iostream>
 #include <limits>
 #include <vector>
+#include <algorithm>
 
 class Span {
-  private:
-	std::vector<int> _data;
-	unsigned int _maxSize;
+	private:
+		std::vector<int> _data;
+		unsigned int _maxSize;
+		Span();
 
-  public:
-	Span();
-	Span(unsigned int N);
-	~Span();
-	Span(const Span& other);
-	Span& operator=(const Span& other);
-	int& operator[](unsigned int index);
+	public:
+		Span(unsigned int N);
+		~Span();
+		Span(const Span& other);
+		Span& operator=(const Span& other);
+		int& operator[](unsigned int index);
 
-	void addNumber(unsigned int nb);
-	void addRange(std::vector<int>::iterator begin, std::vector<int>::iterator end);
-	int shortestSpan() const;
-	int longestSpan() const;
+		void addNumber(unsigned int nb);
+		int shortestSpan() const;
+		int longestSpan() const;
+
+		template <typename Iterator> void addNumbers(Iterator begin, Iterator end);
 };
+
+#include "Span.tpp"
+
+#endif

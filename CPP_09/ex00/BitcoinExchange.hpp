@@ -9,10 +9,11 @@
 #include <map>
 #include <fstream>
 #include <iomanip> // for std::setprecision, std::fixed
+#include <sstream>
 
 class BitcoinExchange {
 	private:
-		std::map<std::string, double> _db;
+		std::map<std::time_t, double> _db;
 
 	public:
 		BitcoinExchange();
@@ -21,8 +22,10 @@ class BitcoinExchange {
 		BitcoinExchange&	operator=(const BitcoinExchange& other);
 
 		void	loadDatabase(const std::string& filename);
-		size_t	findSeparatorDb(const std::string& line);
-		std::string	convertDate(const std::string& input, size_t index); // const?
+		size_t	findSeparator(const std::string& line, const char& c);
+		std::time_t	stringToDate(const std::string& input, size_t index); // const?
+		std::string	dateToString(std::time_t timestamp);
+		bool	isValidDateFormat(const std::string& input);
 		double	convertDouble(const std::string& input);
 
 		void	processInput(const std::string& filename);

@@ -37,28 +37,9 @@ void Span::addNumber(unsigned int nb) {
 	this->_data.push_back(nb);
 }
 
-void Span::addRange(std::vector<int>::iterator begin, std::vector<int>::iterator end) {
-	if (_data.size() >= this->_maxSize)
-		throw std::runtime_error("Span is full");
-	while (begin != end) {
-		_data.push_back(*begin);
-		++begin;
-	}
-}
-
 int Span::shortestSpan() const {
 	if (_data.size() <= 1)
 		throw std::runtime_error("Span is empty or contains only 1 element");
-
-	// O(n * n)
-	// int shortest = std::abs(_data[1] - _data[0]);
-	// for (unsigned int i = 0; i < _data.size(); ++i) {
-	// 	for (unsigned int j = i + 1; j < _data.size(); ++j) {
-	// 		int tmp = abs(_data[i] - _data[j]);
-	// 		if (tmp < shortest)
-	// 			shortest = tmp;
-	// 	}
-	// }
 
 	// O(n log n)
 	std::vector<int> copyVec = _data;

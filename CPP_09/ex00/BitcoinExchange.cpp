@@ -32,8 +32,8 @@ void BitcoinExchange::loadDatabase(const std::string& filename) {
 		throw std::runtime_error("Error: no header detected.");
 
 	while (std::getline(file, line)) {
-		size_t index = findSeparatorDb(line);
-		std::string date = convertDate(line, index);
+		size_t index = findSeparator(line, ',');
+		std::time_t date = stringToDate(line, index);
 		double rate = convertDouble((line.substr(index + 1)));
 		// std::cout << "date : " << date << std::endl;
 		// std::cout << "rate : " << rate << std::endl;
@@ -43,20 +43,54 @@ void BitcoinExchange::loadDatabase(const std::string& filename) {
 	std::cout << "Database loaded." << std::endl;
 }
 
-size_t BitcoinExchange::findSeparatorDb(const std::string& line) {
-	size_t index = line.find(',');
-	if (index == std::string::npos) // -1
-		throw std::runtime_error("Error: no separator found.");
+size_t BitcoinExchange::findSeparator(const std::string& line, const char& c) {
+	size_t index = line.find(c);
+	if (index == std::string::npos) // == -1
+		throw std::runtime_error("Error: bad input => " + line);
 	return index;
 }
 
-std::string BitcoinExchange::convertDate(const std::string& input, size_t index) {
+bool BitcoinExchange::isValidDateFormat(const std::string& date) {
+	if (date.length() != 10)
+		return false;
+
+	for (int i = 0; i < 10; ++i) {
+		if ((i >= 0 && i <= 3) || (i >= 5 && i <= 6) || (i >= 8 && i <= 9)) {
+            if (!std::isdigit(date[i]))
+                return false;
+        }
+		else if (i == 4 || i == 7) {
+            if (date[i] != '-')
+                return false;
+        }
+		else
+            return false; // shouldn't reach here
+	}
+	return true;
+}
+
+std::time_t BitcoinExchange::stringToDate(const std::string& input, size_t index) {
 	std::string date = input.substr(0, index);
-	// sanitize and throw
-	// 2009-01-02,0
-	// 2011-10-23,3.31
-	// 2011-10-26,3
-	return date;
+	date.erase(std::remove_if(date.begin(), date.end(), ::isspace), date.end());
+
+	if (!isValidDateFormat(date))
+		throw std::runtime_error("Error: bad input => " + input);
+
+	int year = std::atoi(date.substr(0, 4).c_str());
+	int month = std::atoi(date.substr(5, 2).c_str());
+	int day = std::atoi(date.substr(8, 2).c_str());
+	
+	std::tm timeInfo = {};
+	timeInfo.tm_year = year - 1900;
+	timeInfo.tm_mon = month - 1;
+	timeInfo.tm_mday = day;
+	
+	std::time_t dateTime = std::mktime(&timeInfo);
+	if (dateTime == -1 || timeInfo.tm_year != year - 1900
+		|| timeInfo.tm_mon != month - 1 || timeInfo.tm_mday != day)
+		throw std::runtime_error("Error: bad input => " + input);
+
+	return dateTime;
 }
 
 double BitcoinExchange::convertDouble(const std::string& input) {
@@ -65,8 +99,20 @@ double BitcoinExchange::convertDouble(const std::string& input) {
 
 	if (end == input.c_str())
 		throw std::runtime_error("Error: conversion to double failed.");
-	// check if negative
+	if (f < 0)
+		throw std::runtime_error("Error: not a positive number.");
 	return f;
+}
+
+std::string BitcoinExchange::dateToString(std::time_t timestamp) {
+    std::tm* timeInfo = std::localtime(&timestamp);
+
+    std::ostringstream oss;
+    oss << (timeInfo->tm_year + 1900) << "-"
+        << std::setw(2) << std::setfill('0') << (timeInfo->tm_mon + 1) << "-"
+        << std::setw(2) << std::setfill('0') << timeInfo->tm_mday;
+
+    return oss.str();
 }
 
 void BitcoinExchange::processInput(const std::string& filename) {
@@ -79,31 +125,27 @@ void BitcoinExchange::processInput(const std::string& filename) {
 	if (line != HEADER_INPUT)
 		throw std::runtime_error("Error: no header detected.");
 
-	// std::cout << std::fixed << std::setprecision(2);
-
 	while (std::getline(file, line)) {
-		size_t index = line.find('|');
-		if (index == std::string::npos) {
-			std::cout << "Error: bad input => " << line << std::endl;
-			continue;
+		try {
+			size_t index = findSeparator(line, '|');
+			std::time_t date = stringToDate(line, index);
+			double value = convertDouble((line.substr(index + 1)));
+			if (value > 1000) {
+				throw std::runtime_error("Error: too large a number.");}
+			// std::cout << date << " | " << value << std::endl;
+			if (_db.find(date) != _db.end())
+				std::cout << "MATCH " << dateToString(date) << " | " << _db[date] << std::endl;
+			else {
+				
+			}
+
+
+		} catch (const std::exception &e) {
+			std::cout << e.what() << std::endl;
 		}
-		std::string date = convertDate(line, index);
-		double value = convertDouble((line.substr(index + 1)));
-		if (value < 0) {
-			std::cout << "Error: not a positive number." << std::endl;
-			continue;
-		}
-		if (value > 1000) {
-			std::cout << "Error: too large a number." << std::endl;
-			continue;
-		}
-		// std::cout << date << " | " << value << std::endl;
-		if (this->_db[date])
-			std::cout << "MATCH " << date << " | " << this->_db[date] << std::endl;
-		// this->_db[date] = rate;
+		
 	}
 	file.close(); // needed?
-	std::cout << "Input processed." << std::endl;
 }
 
 // Votre programme doit afficher sur la sortie standard le résultat de la valeur multipliée
