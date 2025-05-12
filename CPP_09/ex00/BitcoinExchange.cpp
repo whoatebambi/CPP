@@ -22,7 +22,7 @@ BitcoinExchange& BitcoinExchange::operator=(const BitcoinExchange& other) {
 }
 
 void BitcoinExchange::loadDatabase(const std::string& filename) {
-	std::ifstream file(filename);
+	std::ifstream file(filename.c_str());
 	if (!file)
 		throw std::runtime_error("Error: could not open database file.");
 	std::string line;
@@ -33,7 +33,7 @@ void BitcoinExchange::loadDatabase(const std::string& filename) {
 
 	while (std::getline(file, line)) {
 		size_t index = findSeparator(line, ',');
-		std::time_t date = stringToDate(line, index);
+		time_t date = stringToDate(line, index);
 		double rate = convertDouble((line.substr(index + 1)));
 		// std::cout << "date : " << date << std::endl;
 		// std::cout << "rate : " << rate << std::endl;
@@ -69,7 +69,7 @@ bool BitcoinExchange::isValidDateFormat(const std::string& date) {
 	return true;
 }
 
-std::time_t BitcoinExchange::stringToDate(const std::string& input, size_t index) {
+time_t BitcoinExchange::stringToDate(const std::string& input, size_t index) {
 	std::string date = input.substr(0, index);
 	date.erase(std::remove_if(date.begin(), date.end(), ::isspace), date.end());
 
@@ -80,12 +80,12 @@ std::time_t BitcoinExchange::stringToDate(const std::string& input, size_t index
 	int month = std::atoi(date.substr(5, 2).c_str());
 	int day = std::atoi(date.substr(8, 2).c_str());
 	
-	std::tm timeInfo = {};
+	tm timeInfo = {};
 	timeInfo.tm_year = year - 1900;
 	timeInfo.tm_mon = month - 1;
 	timeInfo.tm_mday = day;
 	
-	std::time_t dateTime = std::mktime(&timeInfo);
+	time_t dateTime = mktime(&timeInfo);
 	if (dateTime == -1 || timeInfo.tm_year != year - 1900
 		|| timeInfo.tm_mon != month - 1 || timeInfo.tm_mday != day)
 		throw std::runtime_error("Error: bad input => " + input);
@@ -104,8 +104,8 @@ double BitcoinExchange::convertDouble(const std::string& input) {
 	return f;
 }
 
-std::string BitcoinExchange::dateToString(std::time_t timestamp) {
-    std::tm* timeInfo = std::localtime(&timestamp);
+std::string BitcoinExchange::dateToString(time_t timestamp) {
+    tm* timeInfo = std::localtime(&timestamp);
 
     std::ostringstream oss;
     oss << (timeInfo->tm_year + 1900) << "-"
@@ -116,7 +116,7 @@ std::string BitcoinExchange::dateToString(std::time_t timestamp) {
 }
 
 void BitcoinExchange::processInput(const std::string& filename) {
-	std::ifstream file(filename);
+	std::ifstream file(filename.c_str());
 	if (!file)
 		throw std::runtime_error("Error: could not open input file.");
 	std::string line;
@@ -128,7 +128,7 @@ void BitcoinExchange::processInput(const std::string& filename) {
 	while (std::getline(file, line)) {
 		try {
 			size_t index = findSeparator(line, '|');
-			std::time_t date = stringToDate(line, index);
+			time_t date = stringToDate(line, index);
 			double value = convertDouble((line.substr(index + 1)));
 			if (value > 1000) {
 				throw std::runtime_error("Error: too large a number.");}
