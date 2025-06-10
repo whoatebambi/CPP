@@ -29,7 +29,7 @@ class BitcoinExchange {
 		time_t	stringToDate(const std::string& input, size_t index); // const?
 		std::string	dateToString(time_t timestamp);
 		bool	isValidDateFormat(const std::string& input);
-		double	convertDouble(const std::string& input);
+		double	convertDouble(const std::string& line, const std::string& input);
 
 		void	processInput(const std::string& filename);
 };

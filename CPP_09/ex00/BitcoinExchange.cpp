@@ -16,7 +16,7 @@ BitcoinExchange::BitcoinExchange(const BitcoinExchange& other) {
 BitcoinExchange& BitcoinExchange::operator=(const BitcoinExchange& other) {
 	std::cout << "BitcoinExchange assignment operator called" << std::endl;
 	if (this != &other) {
-		*this = other;
+		this->_db = other._db;
 	}
 	return *this;
 }
@@ -34,12 +34,14 @@ void BitcoinExchange::loadDatabase(const std::string& filename) {
 	while (std::getline(file, line)) {
 		size_t index = findSeparator(line, ',');
 		time_t date = stringToDate(line, index);
-		double rate = convertDouble((line.substr(index + 1)));
-		// std::cout << "date : " << date << std::endl;
-		// std::cout << "rate : " << rate << std::endl;
-		this->_db[date] = rate;
+		double rate = convertDouble(line, (line.substr(index + 1)));
+		_db[date] = rate;
 	}
-	file.close(); // needed?
+
+	if (_db.empty())
+		throw std::runtime_error("Error: database is empty.");
+
+	file.close();
 	std::cout << "Database loaded." << std::endl;
 }
 
@@ -64,7 +66,7 @@ bool BitcoinExchange::isValidDateFormat(const std::string& date) {
                 return false;
         }
 		else
-            return false; // shouldn't reach here
+            return false;
 	}
 	return true;
 }
@@ -93,12 +95,13 @@ time_t BitcoinExchange::stringToDate(const std::string& input, size_t index) {
 	return dateTime;
 }
 
-double BitcoinExchange::convertDouble(const std::string& input) {
+double BitcoinExchange::convertDouble(const std::string& line, const std::string& input) {
 	char* end;
 	double f = strtod(input.c_str(), &end);
 
 	if (end == input.c_str())
-		throw std::runtime_error("Error: conversion to double failed.");
+		// throw std::runtime_error("Error: conversion to double failed.");
+		throw std::runtime_error("Error: bad input => " + line);
 	if (f < 0)
 		throw std::runtime_error("Error: not a positive number.");
 	return f;
@@ -129,47 +132,23 @@ void BitcoinExchange::processInput(const std::string& filename) {
 		try {
 			size_t index = findSeparator(line, '|');
 			time_t date = stringToDate(line, index);
-			double value = convertDouble((line.substr(index + 1)));
+			double value = convertDouble(line, (line.substr(index + 1)));
+
 			if (value > 1000) {
 				throw std::runtime_error("Error: too large a number.");}
-			// std::cout << date << " | " << value << std::endl;
-			if (_db.find(date) != _db.end())
-				std::cout << "MATCH " << dateToString(date) << " | " << _db[date] << std::endl;
-			else {
-				
-			}
 
+			std::map<time_t, double>::const_iterator it = _db.lower_bound(date);
+			if (it == _db.end() || it->first != date) {
+				if (it == _db.begin())
+					throw std::runtime_error("Error: no earlier date available.");
+				--it;
+			}
+			std::cout << dateToString(date) << " => " << value << " = " << it->second * value << std::endl;
 
 		} catch (const std::exception &e) {
 			std::cout << e.what() << std::endl;
 		}
 		
 	}
-	file.close(); // needed?
+	file.close();
 }
-
-// Votre programme doit afficher sur la sortie standard le résultat de la valeur multipliée
-// par le taux de change en fonction de la date indiquée dans votre base de données.
-
-// $> ./btc input.txt
-// 2011-01-03 => 3 = 0.9
-// 2011-01-03 => 2 = 0.6
-// 2011-01-03 => 1 = 0.3
-// 2011-01-03 => 1.2 = 0.36
-// 2011-01-09 => 1 = 0.32
-// Error: not a positive number.
-// Error: bad input => 2001-42-42
-// 2012-01-11 => 1 = 7.1
-// Error: too large a number.
-// $>
-
-// date | value
-// 2011-01-03 | 3
-// 2011-01-03 | 2
-// 2011-01-03 | 1
-// 2011-01-03 | 1.2
-// 2011-01-09 | 1
-// 2012-01-11 | -1
-// 2001-42-42
-// 2012-01-11 | 1
-// 2012-01-11 | 2147483648
