@@ -1,11 +1,5 @@
 #include "BitcoinExchange.hpp"
 
-#include <iostream>
-#include <string>
-#include <exception>
-#include <ctime>
-#include <sstream>
-
 int main(int ac, char **av) {
 	if (ac != 2) {
 		std::cout << "Error: could not open file." << std::endl;

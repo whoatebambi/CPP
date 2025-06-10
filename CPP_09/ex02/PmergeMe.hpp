@@ -1,11 +1,14 @@
 #ifndef PMERGEME_HPP
 # define PMERGEME_HPP
 
-# include <vector>
-# include <deque>
-# include <string>
-# include <ctime>
-# include <iostream>
+#include <vector>
+#include <deque>
+#include <string>
+#include <iostream>
+#include <exception>
+#include <climits>   // Pour INT_MAX
+#include <cstdlib>   // Pour std::strtoul
+#include <ctime>
 
 class PmergeMe {
 public:

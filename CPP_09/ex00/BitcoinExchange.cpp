@@ -9,12 +9,12 @@ BitcoinExchange::~BitcoinExchange() {
 }
 
 BitcoinExchange::BitcoinExchange(const BitcoinExchange& other) {
-	std::cout << "BitcoinExchange copy constructor called" << std::endl;
+	// std::cout << "BitcoinExchange copy constructor called" << std::endl;
 	*this = other;
 }
 
 BitcoinExchange& BitcoinExchange::operator=(const BitcoinExchange& other) {
-	std::cout << "BitcoinExchange assignment operator called" << std::endl;
+	// std::cout << "BitcoinExchange assignment operator called" << std::endl;
 	if (this != &other) {
 		this->_db = other._db;
 	}
@@ -32,10 +32,14 @@ void BitcoinExchange::loadDatabase(const std::string& filename) {
 		throw std::runtime_error("Error: no header detected.");
 
 	while (std::getline(file, line)) {
-		size_t index = findSeparator(line, ',');
-		time_t date = stringToDate(line, index);
-		double rate = convertDouble(line, (line.substr(index + 1)));
-		_db[date] = rate;
+		try {
+			size_t index = findSeparator(line, ',');
+			time_t date = stringToDate(line, index);
+			double rate = convertDouble(line, (line.substr(index + 1)));
+			_db[date] = rate;
+		} catch (const std::exception &e) {
+			std::cout << e.what() << std::endl;
+		}
 	}
 
 	if (_db.empty())

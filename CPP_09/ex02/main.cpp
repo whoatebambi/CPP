@@ -1,13 +1,5 @@
 #include "PmergeMe.hpp"
 
-#include <iostream>
-#include <string>
-#include <exception>
-#include <ctype.h>
-#include <string>
-#include <climits>   // Pour INT_MAX
-#include <cstdlib>   // Pour std::strtoul
-
 int	parseIntArg(const std::string& arg) {
 	if (arg.empty())
 		throw std::runtime_error("Error: empty input => " + arg);
@@ -25,8 +17,6 @@ int	main(int ac, char **av) {
 	if (ac < 2) {
 		std::cout << "Error: usage ./PmergeMe [int] [int] ..." << std::endl;
 		// ./PmergeMe `shuf -i 1-100000 -n 3000 | tr "\n" " "`
-		// ./PmergeMe `gshuf -i 1-100000 -n 3 | tr '\n' ' '`
-		// ./PmergeMe `jot -r 3 1 100000 | tr '\n' ' '`
 		return 1;
 	}
 	try {

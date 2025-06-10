@@ -1,30 +1,28 @@
 #include "PmergeMe.hpp"
-#include <algorithm> // pour std::sort (à remplacer plus tard)
 
 PmergeMe::PmergeMe() {}
 PmergeMe::~PmergeMe() {}
 
 void PmergeMe::process(std::vector<int>& vec, std::deque<int>& deq) {
-	// printContainer("Before:", vec);
-(void)deq;
+	printContainer("Before:", vec);
+
 	clock_t startVec = clock();
 	fordJohnsonSort(vec);
 	clock_t endVec = clock();
 
-	// clock_t startDeq = clock();
-	// fordJohnsonSort(deq);
-	// clock_t endDeq = clock();
+	clock_t startDeq = clock();
+	fordJohnsonSort(deq);
+	clock_t endDeq = clock();
 
-	// printContainer("After: ", vec);
+	printContainer("After: ", vec);
 
-	// printTime()
 	double vecTime = 1000000.0 * (endVec - startVec) / CLOCKS_PER_SEC;	
 	std::cout << "Time to process a range of " << vec.size()
 		<< " elements with std::vector : " << vecTime << " us" << std::endl;
-	
-	// double deqTime = 1000000.0 * (endDeq - startDeq) / CLOCKS_PER_SEC;
-	// std::cout << "Time to process a range of " << deq.size()
-	// 		<< " elements with std::deque :  " << deqTime << " us" << std::endl;
+
+	double deqTime = 1000000.0 * (endDeq - startDeq) / CLOCKS_PER_SEC;
+	std::cout << "Time to process a range of " << deq.size()
+		<< " elements with std::deque :  " << deqTime << " us" << std::endl;
 }
 
 void PmergeMe::fordJohnsonSort(std::vector<int>& vec, int depth) {
@@ -32,8 +30,8 @@ void PmergeMe::fordJohnsonSort(std::vector<int>& vec, int depth) {
 		return;
 
 	std::string indent(depth * 2, ' ');
-	std::cout << indent << "Entering  : ";
-	printContainer("", vec);
+	// std::cout << indent << "Entering  : ";
+	// printContainer("", vec);
 
 	std::vector<int> mainChain;
 	std::vector<int> pending;
@@ -49,21 +47,18 @@ void PmergeMe::fordJohnsonSort(std::vector<int>& vec, int depth) {
 			pending.push_back(a);
 		}
 	}
-	std::cout << indent << "Entering M: ";
-	printContainer("", mainChain);
-	std::cout << indent << "Entering p: ";
-	printContainer("", pending);
+	// std::cout << indent << "Entering M: ";
+	// printContainer("", mainChain);
+	// std::cout << indent << "Entering p: ";
+	// printContainer("", pending);
 
-	// Recursive sort on main chain
 	fordJohnsonSort(mainChain, depth + 1);
 
-	// Insert pending into sorted mainChain
 	for (size_t i = 0; i < pending.size(); ++i) {
 		std::vector<int>::iterator pos = std::lower_bound(mainChain.begin(), mainChain.end(), pending[i]);
 		mainChain.insert(pos, pending[i]);
 	}
 
-	// Insert leftover element
 	if (vec.size() % 2 == 1) {
 		int last = vec.back();
 		std::vector<int>::iterator pos = std::lower_bound(mainChain.begin(), mainChain.end(), last);
@@ -72,8 +67,8 @@ void PmergeMe::fordJohnsonSort(std::vector<int>& vec, int depth) {
 
 	vec = mainChain;
 
-	std::cout << indent << "Sorted  :   ";
-	printContainer("", vec);
+	// std::cout << indent << "Sorted  :   ";
+	// printContainer("", vec);
 }
 
 void PmergeMe::fordJohnsonSort(std::deque<int>& deq, int depth) {
@@ -81,8 +76,8 @@ void PmergeMe::fordJohnsonSort(std::deque<int>& deq, int depth) {
 		return;
 
 	std::string indent(depth * 2, ' ');
-	std::cout << indent << "Entering: ";
-	printContainer("", deq);
+	// std::cout << indent << "Entering: ";
+	// printContainer("", deq);
 
 	std::deque<int> mainChain;
 	std::deque<int> pending;
@@ -114,8 +109,8 @@ void PmergeMe::fordJohnsonSort(std::deque<int>& deq, int depth) {
 
 	deq = mainChain;
 
-	std::cout << indent << "Sorted:   ";
-	printContainer("", deq);
+	// std::cout << indent << "Sorted:   ";
+	// printContainer("", deq);
 }
 
 template <typename T>

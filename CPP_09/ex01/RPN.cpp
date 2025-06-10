@@ -1,8 +1,4 @@
 #include "RPN.hpp"
-#include <sstream>
-#include <iostream>
-#include <stdexcept>
-#include <cstdlib>
 
 int RPN::evaluate(const std::string& expression) {
 	std::stack<int> stack;
@@ -10,7 +6,7 @@ int RPN::evaluate(const std::string& expression) {
 	std::string token;
 
 	while (iss >> token) {
-		std::cout << "tocken: " << token << std::endl;
+		// std::cout << "tocken: " << token << std::endl;
 		if (token.length() == 1 && std::isdigit(token[0])) {
 			stack.push(token[0] - '0');
 		}
@@ -29,7 +25,7 @@ int RPN::evaluate(const std::string& expression) {
 				result = a / b;
 			}
 			stack.push(result);
-			std::cout << "stack.push: " << result << std::endl;
+			// std::cout << "stack.push: " << result << std::endl;
 		}
 		else
 			throw std::runtime_error("Error");

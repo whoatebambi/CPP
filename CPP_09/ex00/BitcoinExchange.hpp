@@ -13,6 +13,9 @@
 #include <iostream>
 #include <map>
 #include <sstream>
+#include <exception>
+#include <iostream>
+#include <string>
 
 class BitcoinExchange {
 	private:
