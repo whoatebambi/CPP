@@ -11,20 +11,22 @@
 #include <ctime>
 
 class PmergeMe {
-public:
-	PmergeMe();
-	~PmergeMe();
+	private:
+		PmergeMe(const PmergeMe& other);
+		PmergeMe&	operator=(const PmergeMe& other);
 
-	void process(std::vector<int>& vec, std::deque<int>& deq);
+	public:
+		PmergeMe();
+		~PmergeMe();
+		void process(std::vector<int>& vec, std::deque<int>& deq);
+		std::vector<size_t> jacobsthalInsertionOrder(size_t size);
 
-private:
-	// void fordJohnsonSort(std::vector<int>& vec);
-	// void fordJohnsonSort(std::deque<int>& deq);
-	void fordJohnsonSort(std::vector<int>& vec, int depth = 0);
-	void fordJohnsonSort(std::deque<int>& deq, int depth = 0);
-
-	template <typename T>
-	void printContainer(const std::string& text, const T& container);
+		template <typename Container>
+		void fordJohnsonSort(Container& container, int depth);
+		template <typename T>
+		void printContainer(const std::string& text, const T& container);
 };
+
+#include "PmergeMe.tpp"
 
 #endif

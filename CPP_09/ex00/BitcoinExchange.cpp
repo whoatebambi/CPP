@@ -8,19 +8,6 @@ BitcoinExchange::~BitcoinExchange() {
 	// std::cout << "BitcoinExchange destructor called" << std::endl;
 }
 
-BitcoinExchange::BitcoinExchange(const BitcoinExchange& other) {
-	// std::cout << "BitcoinExchange copy constructor called" << std::endl;
-	*this = other;
-}
-
-BitcoinExchange& BitcoinExchange::operator=(const BitcoinExchange& other) {
-	// std::cout << "BitcoinExchange assignment operator called" << std::endl;
-	if (this != &other) {
-		this->_db = other._db;
-	}
-	return *this;
-}
-
 void BitcoinExchange::loadDatabase(const std::string& filename) {
 	std::ifstream file(filename.c_str());
 	if (!file)

@@ -8,8 +8,14 @@
 #include <exception>
 
 class RPN {
-    public:
-        static int evaluate(const std::string& expression);
+	private:
+		RPN(const RPN& other);
+		RPN&	operator=(const RPN& other);
+
+	public:
+		RPN();
+		~RPN();
+		static int parseInput(const std::string& expression);
 };
 
 #endif

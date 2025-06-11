@@ -7,11 +7,11 @@ void PmergeMe::process(std::vector<int>& vec, std::deque<int>& deq) {
 	printContainer("Before:", vec);
 
 	clock_t startVec = clock();
-	fordJohnsonSort(vec);
+	fordJohnsonSort(vec, 0);
 	clock_t endVec = clock();
 
 	clock_t startDeq = clock();
-	fordJohnsonSort(deq);
+	fordJohnsonSort(deq, 0);
 	clock_t endDeq = clock();
 
 	printContainer("After: ", vec);
@@ -22,101 +22,39 @@ void PmergeMe::process(std::vector<int>& vec, std::deque<int>& deq) {
 
 	double deqTime = 1000000.0 * (endDeq - startDeq) / CLOCKS_PER_SEC;
 	std::cout << "Time to process a range of " << deq.size()
-		<< " elements with std::deque :  " << deqTime << " us" << std::endl;
+		<< " elements with std::deque  : " << deqTime << " us" << std::endl;
 }
 
-void PmergeMe::fordJohnsonSort(std::vector<int>& vec, int depth) {
-	if (vec.size() <= 1)
-		return;
+std::vector<size_t> PmergeMe::jacobsthalInsertionOrder(size_t size)
+{
+	std::vector<size_t> order;
 
-	std::string indent(depth * 2, ' ');
-	// std::cout << indent << "Entering  : ";
-	// printContainer("", vec);
+	if (size == 0)
+		return order;
 
-	std::vector<int> mainChain;
-	std::vector<int> pending;
+	size_t j0 = 0, j1 = 1;
 
-	for (size_t i = 0; i + 1 < vec.size(); i += 2) {
-		int a = vec[i];
-		int b = vec[i + 1];
-		if (a > b) {
-			mainChain.push_back(a);
-			pending.push_back(b);
-		} else {
-			mainChain.push_back(b);
-			pending.push_back(a);
-		}
+	while (j1 < size)
+	{
+		if (std::find(order.begin(), order.end(), j1) == order.end())
+			order.push_back(j1);
+
+		size_t next = j1 + 2 * j0;
+		j0 = j1;
+		j1 = next;
 	}
-	// std::cout << indent << "Entering M: ";
-	// printContainer("", mainChain);
-	// std::cout << indent << "Entering p: ";
-	// printContainer("", pending);
+	// std::cout << "jacob  :";
+	// printContainer("", order);
 
-	fordJohnsonSort(mainChain, depth + 1);
+	std::vector<bool> used(size, false);
+	for (std::vector<size_t>::const_iterator it = order.begin(); it != order.end(); ++it)
+		used[*it] = true;
 
-	for (size_t i = 0; i < pending.size(); ++i) {
-		std::vector<int>::iterator pos = std::lower_bound(mainChain.begin(), mainChain.end(), pending[i]);
-		mainChain.insert(pos, pending[i]);
-	}
+	for (size_t i = 0; i < size; ++i)
+		if (!used[i])
+			order.push_back(i);
 
-	if (vec.size() % 2 == 1) {
-		int last = vec.back();
-		std::vector<int>::iterator pos = std::lower_bound(mainChain.begin(), mainChain.end(), last);
-		mainChain.insert(pos, last);
-	}
-
-	vec = mainChain;
-
-	// std::cout << indent << "Sorted  :   ";
-	// printContainer("", vec);
-}
-
-void PmergeMe::fordJohnsonSort(std::deque<int>& deq, int depth) {
-	if (deq.size() <= 1)
-		return;
-
-	std::string indent(depth * 2, ' ');
-	// std::cout << indent << "Entering: ";
-	// printContainer("", deq);
-
-	std::deque<int> mainChain;
-	std::deque<int> pending;
-
-	for (size_t i = 0; i + 1 < deq.size(); i += 2) {
-		int a = deq[i];
-		int b = deq[i + 1];
-		if (a > b) {
-			mainChain.push_back(a);
-			pending.push_back(b);
-		} else {
-			mainChain.push_back(b);
-			pending.push_back(a);
-		}
-	}
-
-	fordJohnsonSort(mainChain, depth + 1);
-
-	for (size_t i = 0; i < pending.size(); ++i) {
-		std::deque<int>::iterator pos = std::lower_bound(mainChain.begin(), mainChain.end(), pending[i]);
-		mainChain.insert(pos, pending[i]);
-	}
-
-	if (deq.size() % 2 == 1) {
-		int last = deq.back();
-		std::deque<int>::iterator pos = std::lower_bound(mainChain.begin(), mainChain.end(), last);
-		mainChain.insert(pos, last);
-	}
-
-	deq = mainChain;
-
-	// std::cout << indent << "Sorted:   ";
-	// printContainer("", deq);
-}
-
-template <typename T>
-void PmergeMe::printContainer(const std::string& text, const T& container) {
-	std::cout << text << " ";
-	for (typename T::const_iterator it = container.begin(); it != container.end(); ++it)
-		std::cout << *it << " ";
-	std::cout << std::endl;
+	// std::cout << "order  :";
+	// printContainer("", order);
+	return order;
 }

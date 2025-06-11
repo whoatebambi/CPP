@@ -20,21 +20,21 @@
 class BitcoinExchange {
 	private:
 		std::map<time_t, double> _db;
+		BitcoinExchange(const BitcoinExchange& other);
+		BitcoinExchange&	operator=(const BitcoinExchange& other);
 
 	public:
 		BitcoinExchange();
 		~BitcoinExchange();
-		BitcoinExchange(const BitcoinExchange& other);
-		BitcoinExchange&	operator=(const BitcoinExchange& other);
 
 		void	loadDatabase(const std::string& filename);
+		void	processInput(const std::string& filename);
+
 		size_t	findSeparator(const std::string& line, const char& c);
-		time_t	stringToDate(const std::string& input, size_t index); // const?
+		time_t	stringToDate(const std::string& input, size_t index);
 		std::string	dateToString(time_t timestamp);
 		bool	isValidDateFormat(const std::string& input);
 		double	convertDouble(const std::string& line, const std::string& input);
-
-		void	processInput(const std::string& filename);
 };
 
 #endif

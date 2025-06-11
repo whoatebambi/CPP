@@ -1,12 +1,20 @@
 #include "RPN.hpp"
 
-int RPN::evaluate(const std::string& expression) {
+RPN::RPN() {
+	// std::cout << "RPN constructor called" << std::endl;
+}
+
+RPN::~RPN() {
+	// std::cout << "RPN destructor called" << std::endl;
+}
+
+int RPN::parseInput(const std::string& expression) {
 	std::stack<int> stack;
 	std::istringstream iss(expression);
 	std::string token;
 
 	while (iss >> token) {
-		// std::cout << "tocken: " << token << std::endl;
+		// std::cout << "token: " << token << std::endl;
 		if (token.length() == 1 && std::isdigit(token[0])) {
 			stack.push(token[0] - '0');
 		}
@@ -30,7 +38,9 @@ int RPN::evaluate(const std::string& expression) {
 		else
 			throw std::runtime_error("Error");
 	}
+
 	if (stack.size() != 1)
 		throw std::runtime_error("Error");
+
 	return stack.top();
 }
